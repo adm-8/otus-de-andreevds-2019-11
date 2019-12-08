@@ -9,3 +9,6 @@
 ## Архитектура решения
 
 Была разработана [архитектура решения](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW2_Lesson2/DE-2019-11-AndreevDS-HW2.pdf). 
+
+
+https://docs.google.com/viewer?url=https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW2_Lesson2/DE-2019-11-AndreevDS-HW2.pdf
