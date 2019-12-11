@@ -32,11 +32,11 @@ https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_os_
 Да и наша VPSка тоже вполне подходит: https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_database_requirements.html#cdh_cm_supported_db
 
 ### Поднимаем\ настраиваем виртуалку на GCP в соответствии с требованиями
-* Настройки для виртуалки используем из инструкции к ДЗ. Для простоты будем использовать браузерную консоль. Во всяком случае до тех пор, пока нам этого будет достаточно. 
+Настройки для виртуалки используем из инструкции к ДЗ. Для простоты будем использовать браузерную консоль. Во всяком случае до тех пор, пока нам этого будет достаточно. 
 
 ![OS Installed](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/OS_Intalled.jpg)
 
-* Читаем требования JAVA
+### требования JAVA
 
 ```
 Only 64 bit JDKs are supported. Cloudera Manager 6 and CDH 6 do not support JDK 7. Although JDK 7 is supported on all versions of CDH 5, a CDH 5.x cluster that is managed by Cloudera Manager 6.x must use JDK 8 on all cluster hosts. Oracle JDK 8 is supported in Cloudera Manager 6 and CDH 6. JDK 8 is also supported in CDH 5.3 and higher.
@@ -57,4 +57,11 @@ openjdk version "1.8.0_222"
 OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1ubuntu1~18.04.1-b10)
 OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
 ```
+
+### Требования безопасности и сети
+https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_network_and_security_requirements.html#concept_o3g_kvl_rcb
+
+*Для простоты откроем все порты на виртуалке. В боевых условиях ни в коем случае так делать нельзя!*
+
+
 
