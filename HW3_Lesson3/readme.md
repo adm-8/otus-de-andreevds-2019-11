@@ -66,7 +66,7 @@ https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_net
 https://cloud.google.com/vpc/docs/using-firewalls
 
 У меня получилось как-то так:
-![Network Allow](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/NetworkAllow.jpg)
+![Network Allow](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/NetworkAllow.JPG)
 
 
 
