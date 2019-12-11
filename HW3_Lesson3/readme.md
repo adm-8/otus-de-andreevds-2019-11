@@ -176,16 +176,96 @@ CREATE DATABASE navms OWNER navms ENCODING 'UTF8';
 CREATE DATABASE oozie OWNER oozie ENCODING 'UTF8';
 
 ```
-т.к. наше версия PostgreSQL gt 8.4, нам необходимо изменить настройки некоторых баз:
+т.к. наша версия PostgreSQL gt 8.4, нам необходимо изменить настройки некоторых баз:
 ```
 ALTER DATABASE metastore SET standard_conforming_strings=off;
 ALTER DATABASE oozie SET standard_conforming_strings=off;
+
 ```
 
+### Шаг 5. Настройка Cloudera Manager Database
+
+Для настройки базы Cloudera Manager достаточно выполнить заранее подготовленный скрипт:
+```
+sudo /opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm scm -h [HOST]
+```
+где [HOST] - адрес сервака где крутится PostgrSQL
+
+### Шаг 6. Install CDH and Other Software.
+
+Стартуем Clouder'у
+```
+sudo systemctl start cloudera-scm-server
+```
+
+И читаем логи, запустив команду:
+```
+sudo tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log
+```
+
+Ждем пока появится надпись ниже. Мне её пришлось ждать минут 5-10:
+```
+INFO WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server.
+```
+
+Если не появляется - идём выяснить почему: https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/cm_ig_troubleshooting.html#cmig_topic_19
+Ежели всё хорошо, открываем браузер и идём в веб морду Cloudera Manager:
+```
+http://35.238.154.179/:7180
+```
+
+Запускается визард. Нам необходимо пройти немного шагов:
+
+##### Cluster Basics
+Даем имя кластеру. По мне так "HW3_Cluster" будет вполне себе ок.
+
+##### Specify Hosts
 
 
 
 
+======================
+
+Необходимо указать hostname (FQDN). В нешем случае "localhost", видимо подойдет. оставляем порт SHH = 22 и жмахаем Search. В моем случае появилась одна запись, как я и ожидал.
+
+##### Select Repository
+**Repository Location** - автоматом проставилось в значение  "Custom Repository" с адресом "http://archive.cloudera.com/cm6/6.3.1". Попробовал открыть ссыль, там что-то лежит. Думаю, вполне себе устроит.
+
+**Install Method** - в доукментации сказано, что рекомендуется использовать "Use Packages". Мы люди исполнительные, выбираем этот пункт.
+
+**CDH Version** - "CDH 6" - мой выбор. 
+
+**CDH Minor Version** - Я выбрал "CDH 6.3.2" 
+*в предыдущем пунтке была предупреждалка: "Versions of CDH that are too new for this version of Cloudera Manager (6.3.1) will not be shown.", посмотрим что из этого выйдет =)*
+
+#####  Accept JDK License
+В обязательном порядке читаем лицензионное соглашение. (Нет).
+Т.к. мы поставили JDK в одном из пунктов ранее, НЕ ставим галку и идём дальше.
+
+
+### Созадем пользователя для следующего шага.
+```
+sudo adduser cloudera
+
+``` 
+Вбиваем пароль cloudera.
+Добавляем пользователя в группу sudo
+
+```
+sudo usermod -aG sudo cloudera
+
+``` 
+
+ssh-keygen -t rsa -f ~/.ssh/cloudera_user_ssh_key -C cloudera
+
+
+
+##### Enter Login Credentials
+А вот тут то я и пожалел, что использовал web-console GCP... 
+andreevds_de2019
+
+
+/home/cloudera/.ssh/cloudera_user_ssh_key.pub
 
 
 
