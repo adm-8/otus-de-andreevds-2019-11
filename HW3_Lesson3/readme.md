@@ -61,7 +61,12 @@ OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
 ### Требования безопасности и сети
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_network_and_security_requirements.html#concept_o3g_kvl_rcb
 
-*Для простоты откроем все порты на виртуалке. В боевых условиях ни в коем случае так делать нельзя!*
+Для простоты откроем все порты на виртуалке. **В боевых условиях ни в коем случае так делать нельзя!**
+
+https://cloud.google.com/vpc/docs/using-firewalls
+
+У меня получилось как-то так:
+![Network Allow](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/NetworkAllow.jpg)
 
 
 
