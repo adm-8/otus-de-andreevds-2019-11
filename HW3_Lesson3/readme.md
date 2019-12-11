@@ -34,3 +34,4 @@ https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_os_
 ### Поднимаем\ настраиваем виртуалку на GCP в соответствии с требованиями
 Настройки для виртуалки используем из инструкции к ДЗ. Для простоты будем использовать браузерную консоль. Во всяком случае до тех пор, пока нам этого будет достаточно. 
 
+![OS Installed](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/OS_Intalled.jpg)
