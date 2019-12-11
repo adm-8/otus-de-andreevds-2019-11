@@ -69,4 +69,35 @@ https://cloud.google.com/vpc/docs/using-firewalls
 ![Network Allow](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/NetworkAllow.JPG)
 
 
+### Требования по шифрованию
+https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_encryption_requirements.html#data_at_rest_encryption_reqs
+
+для начала нам предлагают проверить, судя по всему, некий уровень доступности энтропии, N раз выполнив команду ниже. И если будут значения меньше 500, то надо будет подтюнить шарманку.
+```
+cat /proc/sys/kernel/random/entropy_avail
+```
+У меня всё ок:
+![EntropyAvail](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/EntropyAvail.jpg)
+
+Далее нам перечисляют список необхоидимых портов, но они у нас все открыты, так что все должно быть ок.
+
+Кроме того, советуют использовать Transport Layer Security (TLS) сертификаты для обеспечения безопасности. Нас это сейчас не интересует, поэтому скипнем эту часть.
+
+### Прочие требования
+* Для корректной работы Cloudera Manager, Cloudera Navigator, and Hue вы должны юзать свежие браузеры с включенными куками и JS.
+
+ну и казалось бы всё, можно перевести дух и приступать к 
+
+## Установка Cloudera Manager, CDH, and Managed Services
+https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/install_cm_cdh.html
+
+```
+cd /etc/apt/sources.list.d/
+sudo wget https://archive.cloudera.com/cm6/6.3.1/ubuntu1804/apt/cloudera-manager.list
+
+sudo wget https://archive.cloudera.com/cm6/6.3.0/ubuntu1604/apt/archive.key
+sudo apt-key add archive.key
+
+sudo apt-get update
+```
 
