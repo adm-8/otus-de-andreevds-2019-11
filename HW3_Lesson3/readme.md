@@ -89,6 +89,7 @@ cat /proc/sys/kernel/random/entropy_avail
 ну и казалось бы всё, можно перевести дух и приступать к 
 
 ## Установка Cloudera Manager, CDH, and Managed Services
+### Шаг 1. Конфигурация репозитория
 https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/install_cm_cdh.html
 
 ```
@@ -100,4 +101,92 @@ sudo apt-key add archive.key
 
 sudo apt-get update
 ```
+### Шаг 2. Установка JDK
+необходимые действия мы сделали ещё на жтапе проверки требований
+
+### Шаг 3. Установка Cloudera Manager Server
+```
+sudo apt-get install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server
+```
+
+### Шаг 4. Установка баз данных
+Т.к. в моем случае уже есть VPS с PostgreSQL, использую https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/cm_ig_extrnl_pstgrs.html
+
+#### Installing the psycopg2 Python Package
+```
+sudo apt-get install python-pip
+sudo pip install psycopg2==2.7.5 --ignore-installed
+```
+
+#### Configuring and Starting the PostgreSQL Server
+Идём на тачку где поднят PostgreSQL, стартуем базу если она не поднята:
+```
+sudo service postgresql start
+```
+*база должна слушать (для простоты) все айпишники и должен быть включена аутентификация MD5*
+
+Далее надо сконфигурить PostgreSQL, в нашем случае настраивать будем как для "Small to mid-sized clusters". Открываем конфиг, в моем случае он лежит в:
+```
+/etc/postgresql/9.5/main/postgresql.conf
+```
+
+Нужно выставить:
+
+max_connection = 100
+shared_buffers = 256MB
+wal_buffers = 8MB
+max_wal_size = 786	#(3 * checkpoint_segments) * 16MB
+checkpoint_completion_target = 0.9
+* в мануале ещё есть вот этот парамметр - checkpoint_segments = 16  , но у меня его не было. После его добавления БД не поднималась. Видать в 9.5 нет такого*
+
+**В идеале бы разботать, что означает каждый из этого параметра, но это оставим на потом.**
+
+Перезагружаем:
+```
+sudo service postgresql restart
+```
+
+Далее необходимо создать кучку юзеров и баз для разных софтин, входящих в состав Cloudera. Для этого коннектимся к базе:
+```
+sudo -u postgres psql
+```
+Создаем юзеров:
+```
+CREATE ROLE scm LOGIN PASSWORD 'scm';
+CREATE ROLE amon LOGIN PASSWORD 'amon';
+CREATE ROLE rman LOGIN PASSWORD 'rman';
+CREATE ROLE hue LOGIN PASSWORD 'hue';
+CREATE ROLE hive LOGIN PASSWORD 'hive';
+CREATE ROLE sentry LOGIN PASSWORD 'sentry';
+CREATE ROLE nav LOGIN PASSWORD 'nav';
+CREATE ROLE navms LOGIN PASSWORD 'navms';
+CREATE ROLE oozie LOGIN PASSWORD 'oozie';
+
+```
+Создаем базы:
+```
+CREATE DATABASE scm OWNER scm ENCODING 'UTF8';
+CREATE DATABASE amon OWNER amon ENCODING 'UTF8';
+CREATE DATABASE rman OWNER rman ENCODING 'UTF8';
+CREATE DATABASE hue OWNER hue ENCODING 'UTF8';
+CREATE DATABASE metastore OWNER hive ENCODING 'UTF8';
+CREATE DATABASE sentry OWNER sentry ENCODING 'UTF8';
+CREATE DATABASE nav OWNER nav ENCODING 'UTF8';
+CREATE DATABASE navms OWNER navms ENCODING 'UTF8';
+CREATE DATABASE oozie OWNER oozie ENCODING 'UTF8';
+
+```
+т.к. наше версия PostgreSQL gt 8.4, нам необходимо изменить настройки некоторых баз:
+```
+ALTER DATABASE metastore SET standard_conforming_strings=off;
+ALTER DATABASE oozie SET standard_conforming_strings=off;
+```
+
+
+
+
+
+
+
+
 
