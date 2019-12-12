@@ -12,6 +12,11 @@ https://docs.google.com/document/d/1iLTiN7D1kM4njOEbF_f_YGT7Jj7OnvT_WjbU3rX6Hzw/
 * Задание сдано в срок (Рекомендуем сдать до: 15.12.2019) - 1 балл
 * Минимальное количество баллов для сдачи задания - 3
 
+
+![ClouderaManagerHome](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/ClouderaManagerHome.JPG)
+
+![FirstSelectOk](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/FirstSelectOk.JPG)
+
 ### Опиcание решения
 Было принято решение не использовать Docker, а поднять Cloudera руками с нуля т.к. 
 * в ходе занятия стало ясно, что Cloudera, развернутая через Docker, работает так себе 
@@ -264,4 +269,54 @@ http://[IP]:7180
 ![Inspect Cluster](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/InspectNetworkPerf_error.JPG)
 
 Я выбрал радиобаттон в котором написано, что я понимаю риски и го дальше (хотя я конечно же ничего к этому моменту уже не понимал).
+
+## Cluster Configuration
+Далее пошёл процесс настройки кластера
+
+##### Select Services 
+Я сначала выбрал пункт Data Engineering. Мы же вроде как на них учимся. В его состав входит:
+HDFS, YARN (MapReduce 2 Included), ZooKeeper, Oozie, Hive, Hue, and Spark.
+Но этот пункт у меня не взлетел т.к. настройщику чем-то не понравилась моя база Oozie. В итоге я выбрал ручную настрйоку и выбрал всё то же, что и в DE, только без Oozie. 
+К тому же, зачем он нам нужен если есть Airflow =)
+
+##### Assign Roles
+Т.к. ни о каких ролях в разрезе хадупа я не слышал, решил ничего на жтом экране не трогать. Ну его. 
+По итогу оказалось, что всё норм. Хотя конечно разобраться что за роли - однозначно надо.
+
+##### Setup Databases
+Тут нам предлагают вбить данные для БД. Вбили, делаем Test Connection и всё прекрасно:
+![DB OK](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/db_test_ok.JPG)
+*Однако не заываем, что Oozie то не взлетел*
+
+Идём дальше. Смотрим изменения, жмахаем далее и попадаем на 
+
+##### Summary
+![Summary OK](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/SummaryOk.JPG)
+
+Уже не плохо, но это ещё не конец ДЗ.
+
+### Cloudera Home Page
+![ClouderaManagerHome](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/ClouderaManagerHome.JPG)
+
+### Hue Creating Account
+![HueCreatingAccount](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/HueCreatingAccount.JPG)
+
+### Hue Home Page
+![HueHome](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/HueHome.JPG)
+
+### Creating Table
+![CreateTableSuccess](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/CreateTableSuccess.JPG)
+
+### First Select
+![FirstSelectOk](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/FirstSelectOk.JPG)
+
+
+## Заключение
+
+![Result](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/ok_result.jpg)
+
+
+
+
+
 
