@@ -25,14 +25,14 @@ https://docs.google.com/document/d/1iLTiN7D1kM4njOEbF_f_YGT7Jj7OnvT_WjbU3rX6Hzw/
 ### Начинаем знакомиться с требованиями 
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_requirements_supported_versions.html
 
-И понимаем, что нам вполне подойдет машина и CentOS7:
+И понимаем, что нам вполне подойдет машина с CentOS7:
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_hardware_requirements.html#concept_vvv_cxt_gbb
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_os_requirements.html#os_requirements
 
 Да и наша VPSка тоже вполне подходит: https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_database_requirements.html#cdh_cm_supported_db
 
 ### Поднимаем\ настраиваем виртуалку на GCP в соответствии с требованиями
-Настройки для виртуалки используем из инструкции к ДЗ. Для простоты будем использовать браузерную консоль. Во всяком случае до тех пор, пока нам этого будет достаточно. 
+Создаем вируртуалу на GCP с CentOS7, берем 4 проца, 15 ОЗУ + 50гб Диска
 
 ![OS Installed](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/OS_Intalled.jpg)
 
@@ -43,10 +43,7 @@ Only 64 bit JDKs are supported. Cloudera Manager 6 and CDH 6 do not support JDK 
 
 OpenJDK 8 is supported in Cloudera Enterprise 6.1.0 and higher, as well as Cloudera Enterprise 5.16.1 and higher. For installation and migration instructions, see Upgrading the JDK.
 ```
-
-Идём и устанавливаем всё необходимое по [мануалу](https://docs.cloudera.com/documentation/enterprise/upgrade/topics/ug_jdk8.html) :
-
-
+Всё необходимо по JAVA мы будем ставить на втором шаге
 
 ### Требования безопасности и сети
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_network_and_security_requirements.html#concept_o3g_kvl_rcb
@@ -80,24 +77,21 @@ cat /proc/sys/kernel/random/entropy_avail
 
 ## Установка Cloudera Manager, CDH, and Managed Services
 ### Шаг 1. Конфигурация репозитория
-https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/install_cm_cdh.html
-
+https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/configure_cm_repo.html
 ```
-sudo yum update
-
 sudo yum install wget
 
-cd /etc/apt/sources.list.d/
-sudo wget https://archive.cloudera.com/cm6/6.3.1/ubuntu1804/apt/cloudera-manager.list
+sudo wget https://archive.cloudera.com/cm6/6.3.1/redhat7/yum/cloudera-manager.repo -P /etc/yum.repos.d/
 
-cd ~
-sudo wget https://archive.cloudera.com/cm6/6.3.0/ubuntu1604/apt/archive.key
-sudo apt-key add archive.key
+sudo rpm --import https://archive.cloudera.com/cm6/6.3.0/redhat7/yum/RPM-GPG-KEY-cloudera
 
 sudo yum update
+
 ```
-### Шаг 2. Установка JDK
+
+### Шаг 2. Установка  Oracle JDK 
 https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/cdh_ig_jdk_installation.html#topic_29
+
 ```
 sudo yum install oracle-j2sdk1.8
 
@@ -105,17 +99,22 @@ sudo yum install oracle-j2sdk1.8
 
 
 ### Шаг 3. Установка Cloudera Manager Server
+https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/install_cm_server.html
 ```
 sudo yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server
+
 ```
 
 ### Шаг 4. Установка баз данных
 Т.к. в моем случае уже есть VPS с PostgreSQL, использую https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/cm_ig_extrnl_pstgrs.html
 
 #### Installing the psycopg2 Python Package
+https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/cm_ig_extrnl_pstgrs.html#cmig_topic_5_6
 ```
 sudo yum install python-pip
+
 sudo pip install psycopg2==2.7.5 --ignore-installed
+
 ```
 
 #### Configuring and Starting the PostgreSQL Server
@@ -183,7 +182,19 @@ ALTER DATABASE oozie SET standard_conforming_strings=off;
 
 ```
 
-*просто на всякий случай оставлю это здесь, мало ли что*
+*просто на всякий случай оставлю это здесь, мало ли что (мне пригодилось т.к. первый раз накатывал на Ubuntu18 и у меня не взлетело. От греха подальше сносил базы*
+```
+DROP DATABASE scm;
+DROP DATABASE amon;
+DROP DATABASE rman;
+DROP DATABASE hue;
+DROP DATABASE metastore;
+DROP DATABASE sentry;
+DROP DATABASE nav;
+DROP DATABASE navms; 
+DROP DATABASE oozie;
+
+```
 
 ### Шаг 5. Настройка Cloudera Manager Database
 
@@ -222,53 +233,13 @@ http://[IP]:7180
 Даем имя кластеру. По мне так "HW3_Cluster" будет вполне себе ок.
 
 ##### Specify Hosts
+======================
 
+А вот тут то я и поплыл. Т.к. о SHH ключиках я заранее не позаботился. Да и как их создавать \ тестировать в GCP - поянтия не имею. Долго пытался  
 
 
 
 ======================
 
 Необходимо указать hostname (FQDN). В нешем случае "localhost", видимо подойдет. оставляем порт SHH = 22 и жмахаем Search. В моем случае появилась одна запись, как я и ожидал.
-
-##### Select Repository
-**Repository Location** - автоматом проставилось в значение  "Custom Repository" с адресом "http://archive.cloudera.com/cm6/6.3.1". Попробовал открыть ссыль, там что-то лежит. Думаю, вполне себе устроит.
-
-**Install Method** - в доукментации сказано, что рекомендуется использовать "Use Packages". Мы люди исполнительные, выбираем этот пункт.
-
-**CDH Version** - "CDH 6" - мой выбор. 
-
-**CDH Minor Version** - Я выбрал "CDH 6.3.2" 
-*в предыдущем пунтке была предупреждалка: "Versions of CDH that are too new for this version of Cloudera Manager (6.3.1) will not be shown.", посмотрим что из этого выйдет =)*
-
-#####  Accept JDK License
-В обязательном порядке читаем лицензионное соглашение. (Нет).
-Т.к. мы поставили JDK в одном из пунктов ранее, НЕ ставим галку и идём дальше.
-
-
-### Созадем пользователя для следующего шага.
-```
-sudo adduser cloudera
-
-``` 
-Вбиваем пароль cloudera.
-Добавляем пользователя в группу sudo
-
-```
-sudo usermod -aG sudo cloudera
-
-``` 
-
-ssh-keygen -t rsa -f ~/.ssh/cloudera_user_ssh_key -C cloudera
-
-
-
-##### Enter Login Credentials
-А вот тут то я и пожалел, что использовал web-console GCP... 
-andreevds_de2019
-
-
-/home/cloudera/.ssh/cloudera_user_ssh_key.pub
-
-
-
 
