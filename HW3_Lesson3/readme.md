@@ -25,7 +25,7 @@ https://docs.google.com/document/d/1iLTiN7D1kM4njOEbF_f_YGT7Jj7OnvT_WjbU3rX6Hzw/
 ### Начинаем знакомиться с требованиями 
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_requirements_supported_versions.html
 
-И понимаем, что нам вполне подойдет машина и Ubuntu 18.04 LTS, описанные в инструкции к ДЗ выше по списку:
+И понимаем, что нам вполне подойдет машина и CentOS7:
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_hardware_requirements.html#concept_vvv_cxt_gbb
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_os_requirements.html#os_requirements
 
@@ -45,18 +45,8 @@ OpenJDK 8 is supported in Cloudera Enterprise 6.1.0 and higher, as well as Cloud
 ```
 
 Идём и устанавливаем всё необходимое по [мануалу](https://docs.cloudera.com/documentation/enterprise/upgrade/topics/ug_jdk8.html) :
-```
-sudo apt-get update
-sudo apt-get install openjdk-8-jdk
-java -version
-```
 
-И видим, что встала нужная версия. В моем случе это :
-```
-openjdk version "1.8.0_222"
-OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1ubuntu1~18.04.1-b10)
-OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
-```
+
 
 ### Требования безопасности и сети
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_network_and_security_requirements.html#concept_o3g_kvl_rcb
@@ -93,20 +83,30 @@ cat /proc/sys/kernel/random/entropy_avail
 https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/install_cm_cdh.html
 
 ```
+sudo yum update
+
+sudo yum install wget
+
 cd /etc/apt/sources.list.d/
 sudo wget https://archive.cloudera.com/cm6/6.3.1/ubuntu1804/apt/cloudera-manager.list
 
+cd ~
 sudo wget https://archive.cloudera.com/cm6/6.3.0/ubuntu1604/apt/archive.key
 sudo apt-key add archive.key
 
-sudo apt-get update
+sudo yum update
 ```
 ### Шаг 2. Установка JDK
-необходимые действия мы сделали ещё на жтапе проверки требований
+https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/cdh_ig_jdk_installation.html#topic_29
+```
+sudo yum install oracle-j2sdk1.8
+
+```
+
 
 ### Шаг 3. Установка Cloudera Manager Server
 ```
-sudo apt-get install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server
+sudo yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server
 ```
 
 ### Шаг 4. Установка баз данных
@@ -114,7 +114,7 @@ sudo apt-get install cloudera-manager-daemons cloudera-manager-agent cloudera-ma
 
 #### Installing the psycopg2 Python Package
 ```
-sudo apt-get install python-pip
+sudo yum install python-pip
 sudo pip install psycopg2==2.7.5 --ignore-installed
 ```
 
@@ -183,6 +183,8 @@ ALTER DATABASE oozie SET standard_conforming_strings=off;
 
 ```
 
+*просто на всякий случай оставлю это здесь, мало ли что*
+
 ### Шаг 5. Настройка Cloudera Manager Database
 
 Для настройки базы Cloudera Manager достаточно выполнить заранее подготовленный скрипт:
@@ -211,7 +213,7 @@ INFO WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server.
 Если не появляется - идём выяснить почему: https://docs.cloudera.com/documentation/enterprise/6/6.3/topics/cm_ig_troubleshooting.html#cmig_topic_19
 Ежели всё хорошо, открываем браузер и идём в веб морду Cloudera Manager:
 ```
-http://35.238.154.179/:7180
+http://[IP]:7180
 ```
 
 Запускается визард. Нам необходимо пройти немного шагов:
