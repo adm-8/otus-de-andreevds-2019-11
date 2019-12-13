@@ -37,18 +37,18 @@ https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_os_
 Да и наша VPSка тоже вполне подходит: https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_database_requirements.html#cdh_cm_supported_db
 
 ### Поднимаем\ настраиваем виртуалку на GCP в соответствии с требованиями
-Создаем вируртуалу на GCP с CentOS7, берем 4 проца, 15 ОЗУ + 50гб Диска
+Создаем вируртуалку на GCP с CentOS7, берем 4 проца, 15 ОЗУ + 50гб Диска
 
 ![OS Installed](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/OS_Intalled.jpg)
 
-### требования JAVA
+### Требования JAVA
 
 ```
 Only 64 bit JDKs are supported. Cloudera Manager 6 and CDH 6 do not support JDK 7. Although JDK 7 is supported on all versions of CDH 5, a CDH 5.x cluster that is managed by Cloudera Manager 6.x must use JDK 8 on all cluster hosts. Oracle JDK 8 is supported in Cloudera Manager 6 and CDH 6. JDK 8 is also supported in CDH 5.3 and higher.
 
 OpenJDK 8 is supported in Cloudera Enterprise 6.1.0 and higher, as well as Cloudera Enterprise 5.16.1 and higher. For installation and migration instructions, see Upgrading the JDK.
 ```
-Всё необходимо по JAVA мы будем ставить на втором шаге
+Всё необходимое по JAVA мы будем ставить на втором шаге
 
 ### Требования безопасности и сети
 https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_network_and_security_requirements.html#concept_o3g_kvl_rcb
@@ -69,6 +69,7 @@ https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_enc
 cat /proc/sys/kernel/random/entropy_avail
 ```
 У меня всё ок:
+
 ![EntropyAvail](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/EntropyAvail.jpg)
 
 Далее нам перечисляют список необхоидимых портов, но они у нас все открыты, так что все должно быть ок.
@@ -76,7 +77,7 @@ cat /proc/sys/kernel/random/entropy_avail
 Кроме того, советуют использовать Transport Layer Security (TLS) сертификаты для обеспечения безопасности. Нас это сейчас не интересует, поэтому скипнем эту часть.
 
 ### Прочие требования
-* Для корректной работы Cloudera Manager, Cloudera Navigator, and Hue вы должны юзать свежие браузеры с включенными куками и JS.
+Для корректной работы Cloudera Manager, Cloudera Navigator, and Hue вы должны юзать свежие браузеры с включенными куками и JS.
 
 ну и казалось бы всё, можно перевести дух и приступать к 
 
@@ -127,7 +128,7 @@ sudo pip install psycopg2==2.7.5 --ignore-installed
 ```
 sudo service postgresql start
 ```
-*база должна слушать (для простоты) все айпишники и должен быть включена аутентификация MD5*
+*база должна слушать (для простоты) все айпишники и должна быть включена аутентификация MD5*
 
 Далее надо сконфигурить PostgreSQL, в нашем случае настраивать будем как для "Small to mid-sized clusters". Открываем конфиг, в моем случае он лежит в:
 ```
@@ -136,11 +137,11 @@ sudo service postgresql start
 
 Нужно выставить:
 
-max_connection = 100
-shared_buffers = 256MB
-wal_buffers = 8MB
-max_wal_size = 786	#(3 * checkpoint_segments) * 16MB
-checkpoint_completion_target = 0.9
+* max_connection = 100
+* shared_buffers = 256MB
+* wal_buffers = 8MB
+* max_wal_size = 786	#(3 * checkpoint_segments) * 16MB
+* checkpoint_completion_target = 0.9
 * в мануале ещё есть вот этот парамметр - checkpoint_segments = 16  , но у меня его не было. После его добавления БД не поднималась. Видать в 9.5 нет такого*
 
 **В идеале бы разботать, что означает каждый из этого параметра, но это оставим на потом.**
@@ -154,6 +155,22 @@ sudo service postgresql restart
 ```
 sudo -u postgres psql
 ```
+
+**НЕ делать для первой установки**
+*Мне это пригодилось т.к. первый раз накатывал на Ubuntu18 и у меня не взлетело и греха подальше сносил базы, созданные при попытке поднять все это добро в предыдущий раз.* 
+```
+DROP DATABASE scm;
+DROP DATABASE amon;
+DROP DATABASE rman;
+DROP DATABASE hue;
+DROP DATABASE metastore;
+DROP DATABASE sentry;
+DROP DATABASE nav;
+DROP DATABASE navms; 
+DROP DATABASE oozie;
+
+```
+**а вот это уже делать:**
 Создаем юзеров:
 ```
 CREATE ROLE scm LOGIN PASSWORD 'scm';
@@ -187,19 +204,6 @@ ALTER DATABASE oozie SET standard_conforming_strings=off;
 
 ```
 
-*просто на всякий случай оставлю это здесь, мало ли что (мне пригодилось т.к. первый раз накатывал на Ubuntu18 и у меня не взлетело. От греха подальше сносил базы*
-```
-DROP DATABASE scm;
-DROP DATABASE amon;
-DROP DATABASE rman;
-DROP DATABASE hue;
-DROP DATABASE metastore;
-DROP DATABASE sentry;
-DROP DATABASE nav;
-DROP DATABASE navms; 
-DROP DATABASE oozie;
-
-```
 
 ### Шаг 5. Настройка Cloudera Manager Database
 
@@ -207,7 +211,7 @@ DROP DATABASE oozie;
 ```
 sudo /opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm scm -h [HOST]
 ```
-где [HOST] - адрес сервака где крутится PostgrSQL
+* где [HOST] - адрес сервака где крутится PostgrSQL
 
 ### Шаг 6. Install CDH and Other Software.
 
@@ -231,6 +235,7 @@ INFO WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server.
 ```
 http://[IP]:7180
 ```
+* где [IP] - внешний адрес вашей машины GCP
 
 Запускается визард. Нам необходимо пройти немного шагов:
 
@@ -244,7 +249,7 @@ http://[IP]:7180
 
 ======================
 
-Я указал hostname (FQDN) =  "localhost", оставил порт SHH = 22 и жмахаем Search. В моем случае появилась одна запись, как я и ожидал. Жмахнул далее. 
+Я указал hostname (FQDN) =  "localhost", оставил порт SHH = 22 и жмахнул "Search". В моем случае появилась одна запись, как я и ожидал. Жмахнул далее. 
 
 #####  Accept JDK License
 В обязательном порядке читаем лицензионное соглашение. (Нет).
@@ -252,16 +257,16 @@ http://[IP]:7180
 
 
 #####  ??? уже не помню как этот пункт назывался. 
-Спрашивали про логины\пароли или же SSH кулючи, которые я не подготовил. Долго вытался генерить ключи, но так ничего и не взлетало.
+Спрашивали про логины\пароли или же SSH ключи, которые я не подготовил. Долго вытался генерить ключи, но так ничего и не взлетало.
 
 ### тут произошла магия
-Я обратил внимание, что если уйти назад на шаг выбора хостов (уже после неуспешных попыток законнектиться к localhost по SSH) появляется вкладка ... не помню уже точно как называется ... "Уже преднастроенные хосты". открываею вкладку, там есть наш localhost, выбираем его, жмахаем далее. 
+Я обратил внимание, что если уйти назад на шаг выбора хостов (уже после неуспешных попыток законнектиться к localhost по SSH) появляется вкладка ... не помню уже точно как называется ... "Уже преднастроенные хосты". открываем вкладку, там есть наш localhost, выбираем его, жмахаем далее. 
 
 ##### Select Repository
-Тут же решил ничего не трогать и оставить как выбрано по дефолту.
+Тут уже решил ничего не трогать и оставить как выбрано по дефолту.
 
 ##### Install Parcels 
-Шарманка что-то ставила-ставила и наконец поставила!!! 
+Шарманка что-то ставила-ставила и наконец поставила!
 
 ##### Inspect Cluster
 На данном шаге мне предложили обследовать кластер. Результат был таковым:
@@ -278,13 +283,12 @@ http://[IP]:7180
 HDFS, YARN (MapReduce 2 Included), ZooKeeper, Oozie, Hive, Hue, and Spark.
 
 ##### Assign Roles
-Т.к. ни о каких ролях в разрезе хадупа я не слышал, решил ничего на жтом экране не трогать. Ну его. 
+Т.к. ни о каких ролях в разрезе хадупа я не слышал, решил ничего на этом экране не трогать. Ну его. 
 По итогу оказалось, что всё норм. Хотя конечно разобраться что за роли - однозначно надо.
 
 ##### Setup Databases
 Тут нам предлагают вбить данные для БД. Вбили, делаем Test Connection и всё прекрасно:
 ![DB OK](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW3_Lesson3/pics/db_test_ok.JPG)
-*Однако не заываем, что Oozie то не взлетел*
 
 Идём дальше. Смотрим изменения, жмахаем далее и попадаем на 
 
