@@ -5,3 +5,5 @@
 ## HW2_Lesson2 - Строим свою архитектуру
 
 ## HW3_Lesson3 - Развернуть дистрибутив Cloudera
+
+## HW4_Lesson5 - Введение в Scala
