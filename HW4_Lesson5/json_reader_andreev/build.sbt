@@ -29,3 +29,4 @@ mainClass := Some("com.github.adm8.de.hw4.JsonReader")
 
 // Add the JAR file naming conventions described here: https://github.com/MrPowers/spark-style-guide#jar-files
 // You can add the JAR file naming conventions by running the shell script
+
