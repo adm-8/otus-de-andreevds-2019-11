@@ -11,7 +11,7 @@ object JsonReader extends App {
   // формруем контекст и читаем файл
   val spark = SparkSession.builder().master("local").getOrCreate()
   val sc = spark.sparkContext
-  val filePath = "D:\\__temp\\winemag-data-130k-v2.json"
+  val filePath = args(0)
   val rddFile = sc.textFile(filePath)
 
   // пробегаемся по файлу
