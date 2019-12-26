@@ -19,10 +19,18 @@ object BostonCrimesMap extends  App {
   val crimes_df = spark.read.options(Map("inferSchema"->"true","delimiter"->",","header"->"true")).csv(crime_file_path)
   val offense_codes_df = spark.read.options(Map("inferSchema"->"true","delimiter"->",","header"->"true")).csv(offense_codes_file_path)
 
-  val joined_df =  crimes_df.join(broadcast(offense_codes_df), crimes_df("OFFENSE_CODE") <=> offense_codes_df("CODE")).select("INCIDENT_NUMBER","NAME", "YEAR", "MONTH", "Lat", "Long")
+  val joined_df =  crimes_df.join(broadcast(offense_codes_df), crimes_df("OFFENSE_CODE") <=> offense_codes_df("CODE")).select("INCIDENT_NUMBER", "DISTRICT", "NAME", "YEAR", "MONTH", "Lat", "Long")
 
-  // подсмотрим немного в джоиненные данные
-  joined_df.show()
+  // сформируем первый фрейм для которого достаточно только GROUP BY `DISTRICT`
+  val df1 = joined_df
+    .select($"DISTRICT", $"Lat", $"Long")
+    .groupBy($"DISTRICT")
+    .agg(
+      count($"DISTRICT").as("TOTAL_CRIMES")
+      , avg($"Lat").as("LATITUDE")
+      , avg($"Long").as("LONGTITUDE")
+    )
+    .show()
 
 
 }
