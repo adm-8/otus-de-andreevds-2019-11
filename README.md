@@ -7,3 +7,5 @@
 ## HW3_Lesson3 - Развернуть дистрибутив Cloudera
 
 ## HW4_Lesson5 - Введение в Scala
+
+## HW5_Lesson7 - Spark - Гид по безопасному Бостону
