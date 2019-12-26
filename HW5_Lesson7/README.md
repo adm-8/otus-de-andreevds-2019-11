@@ -8,7 +8,47 @@ https://docs.google.com/document/d/1elWInbWsLrIDqB4FMMgFTUMNEmiYev9HJUfg9LXxydE/
 Рекомендуем сдать до: 14.01.2020
 
 
-## Полезные ссылки
+## Полезная информация
+
+Запускаем создание проекта:
+```
+e:
+
+cd E:\_Files\__personal\_git\otus-de-andreevds-2019-11\HW5_Lesson7
+
+sbt new MrPowers/spark-sbt.g8
+
+```
+
+Указываем имя проекта:
+```
+BostonCrimesMap
+```
+
+Указываем имя пакета:
+```
+com.example
+```
+
+Импортим проект в IDE, указав **полный путь к build.sbt**
+```
+E:\_Files\__personal\_git\otus-de-andreevds-2019-11\HW5_Lesson7\bostoncrimesmap\build.sbt
+```
+
+**Для версии Spark 2.4.x при импорте проекта надо явно указать версию JDK 1.8, иначе всплывают проблемы при джоинах**
+
+Комментим % "provided" в build.sbt
+```
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4" // % "provided"
+```
+
+Создаем новый объект в main'e и именем:
+```
+BostonCrimesMap
+```
+
+и погнали кодить =)
+
 
 ## Результат
 
