@@ -6,6 +6,8 @@ version := "0.0.1"
 
 scalaVersion := "2.11.12"
 
+
+libraryDependencies += "com.lihaoyi" %% "os-lib" % "0.2.9"
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4" // % "provided"
 
 libraryDependencies += "mrpowers" % "spark-daria" % "0.35.2-s_2.11"
