@@ -36,7 +36,7 @@ E:\_Files\__personal\_git\otus-de-andreevds-2019-11\HW5_Lesson7\bostoncrimesmap\
 ```
 
 
-Комментим % "provided" в build.sbt
+На время разработки комментим % "provided" в build.sbt
 ```
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4" // % "provided"
 ```
@@ -46,8 +46,20 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4" // % "provide
 BostonCrimesMap
 ```
 
-и погнали кодить =)
+И погнали кодить =) После того как завершили кодить, пошли собирать проект:
+```
+e:
 
+E:\>cd E:\_Files\__personal\_git\otus-de-andreevds-2019-11\HW5_Lesson7\bostoncrimesmap
+
+sbt assembly
+```
+
+После того как проект собрался, можем пойти запустить его:
+```
+E:\app\spark-2.4.4-bin-hadoop2.7\bin\spark-submit --master local[*] --class com.example.BostonCrimesMap E:\_Files\__personal\_git\otus-de-andreevds-2019-11\HW5_Lesson7\bostoncrimesmap\target\scala-2.11\BostonCrimesMap-assembly-0.0.1.jar C:\temp\crimes-in-boston\crime.csv C:\temp\crimes-in-boston\offense_codes.csv C:\temp\crimes-in-boston\result
+
+```
 
 ## Результат
 
@@ -57,4 +69,5 @@ BostonCrimesMap
 * Крайне **полезный ресурс**, на котором можно посмотреть с какими версиями scala работает та или иная версия какого-то пакета: https://mvnrepository.com/artifact
 * Для версии Spark 2.4.x при импорте проекта надо явно указать версию JDK 1.8, иначе всплывают проблемы при джоинах
 * Чтобы автоматом подцеплялись имена колонок из файлов во время read.csv необходимо либо добавлять .options(Map("inferSchema"->"true","delimiter"->",","header"->"true")), либо создавать кастомную схему (что предпочтительнее ибо может избавить от проблем при автоматическом определении типов данных в колонках)
+* Для типизации резульатов запроса используем case class, чтобы потом можно было пользоваться groupByKey , flatMapGroups и т.д.
 * Все колонки которые планируем использовать в .agg(count(), avg(), ...) - должны быть заранее выбраны в .select(...)

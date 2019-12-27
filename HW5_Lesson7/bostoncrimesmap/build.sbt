@@ -9,7 +9,7 @@ scalaVersion := "2.11.12"
 
 //libraryDependencies += "com.lihaoyi" %% "os-lib" % "0.2.9"
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4" // % "provided"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4"  % "provided"
 
 libraryDependencies += "mrpowers" % "spark-daria" % "0.35.2-s_2.11"
 
@@ -29,3 +29,25 @@ testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 
 // Add the JAR file naming conventions described here: https://github.com/MrPowers/spark-style-guide#jar-files
 // You can add the JAR file naming conventions by running the shell script
+
+
+assemblyMergeStrategy in assembly := {
+  case PathList("org","aopalliance", xs @ _*) => MergeStrategy.last
+  case PathList("javax", "inject", xs @ _*) => MergeStrategy.last
+  case PathList("javax", "servlet", xs @ _*) => MergeStrategy.last
+  case PathList("javax", "activation", xs @ _*) => MergeStrategy.last
+  case PathList("org", "apache", xs @ _*) => MergeStrategy.last
+  case PathList("com", "google", xs @ _*) => MergeStrategy.last
+  case PathList("com", "esotericsoftware", xs @ _*) => MergeStrategy.last
+  case PathList("com", "codahale", xs @ _*) => MergeStrategy.last
+  case PathList("com", "yammer", xs @ _*) => MergeStrategy.last
+  case "about.html" => MergeStrategy.rename
+  case "META-INF/ECLIPSEF.RSA" => MergeStrategy.last
+  case "META-INF/mailcap" => MergeStrategy.last
+  case "META-INF/mimetypes.default" => MergeStrategy.last
+  case "plugin.properties" => MergeStrategy.last
+  case "log4j.properties" => MergeStrategy.last
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+}
