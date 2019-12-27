@@ -67,7 +67,22 @@ E:\app\spark-2.4.4-bin-hadoop2.7\bin\spark-submit --master local[*] --class com.
 
 ## Что стоит запомнить из этого ДЗ
 * Крайне **полезный ресурс**, на котором можно посмотреть с какими версиями scala работает та или иная версия какого-то пакета: https://mvnrepository.com/artifact
+* sbt-assembly 0.14.6 вполне себе взлетает с версией скалы 2.11.12
 * Для версии Spark 2.4.x при импорте проекта надо явно указать версию JDK 1.8, иначе всплывают проблемы при джоинах
 * Чтобы автоматом подцеплялись имена колонок из файлов во время read.csv необходимо либо добавлять .options(Map("inferSchema"->"true","delimiter"->",","header"->"true")), либо создавать кастомную схему (что предпочтительнее ибо может избавить от проблем при автоматическом определении типов данных в колонках)
 * Для типизации резульатов запроса используем case class, чтобы потом можно было пользоваться groupByKey , flatMapGroups и т.д.
 * Все колонки которые планируем использовать в .agg(count(), avg(), ...) - должны быть заранее выбраны в .select(...)
+
+## Полезные ссылочки:
+https://sparkbyexamples.com/spark/spark-read-csv-file-into-dataframe/ - про чтение CSV и переметры
+https://jaceklaskowski.gitbooks.io/mastering-spark-sql/spark-sql-SparkSession.html - функционал и примеры по SparkSession
+https://spark.apache.org/docs/2.3.0/api/java/org/apache/spark/sql/SparkSession.html - SparkSession
+https://databricks.com/blog/2015/07/15/introducing-window-functions-in-spark-sql.html - про Window Functions
+https://jaceklaskowski.gitbooks.io/mastering-spark-sql/spark-sql-functions-windows.htm - про Window Functions
+https://www.mikulskibartosz.name/row-number-in-apache-spark-window-row-number-rank-and-dense-rank/ - row_number, rank, and dense_rank
+https://blog.codecentric.de/en/2016/07/spark-2-0-datasets-case-classes/ - 
+
+## OPTIONAL TODO:
+* не везде использовать broadcast в джоинах, а только в джоине фреймов-источников
+* переписать кусок с Widnow-function LAG на какой-нибудь другой метод с использованием magGroups + функция которая будет обрабатывать строки, формировать массив, а массив уже конвертить в DF (эт только предположение, понятия не имею взлетит ли такое, потому и ипользовал LAG =) 
+* попрактиковаться с groupByKey , flatMapGroups и т.д. ибо, мягко говоря, не очень понятно как это всё работает =)
