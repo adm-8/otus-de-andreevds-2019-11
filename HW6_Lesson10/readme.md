@@ -36,6 +36,12 @@ Advanced:
 +4 балла - streaming job выводит результаты скоринга и написан udf который выводит последнее значение из поля probability в виде отдельной колонки.
 Рекомендуем сдать до: 26.01.2020
 
+## Результат
+Для запуска jupyter notebook с Python + Spark + Scala, наберите команду в текущей директории:
+```bash
+make run-jupyter
+```
+
 
 ### полезные ссылки
 [Дока по SparkML Random Forest Classifier](https://spark.apache.org/docs/latest/ml-classification-regression.html#random-forest-classifier)
