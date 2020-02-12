@@ -1,3 +1,5 @@
+import sun.security.tools.PathList
+
 resolvers += "Spark Packages Repo" at "http://dl.bintray.com/spark-packages/maven"
 
 name := "BostonCrimesMap"
@@ -9,7 +11,7 @@ scalaVersion := "2.11.12"
 
 //libraryDependencies += "com.lihaoyi" %% "os-lib" % "0.2.9"
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4"  % "provided"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4" % "provided"
 
 libraryDependencies += "mrpowers" % "spark-daria" % "0.35.2-s_2.11"
 
@@ -30,7 +32,7 @@ testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 // Add the JAR file naming conventions described here: https://github.com/MrPowers/spark-style-guide#jar-files
 // You can add the JAR file naming conventions by running the shell script
 
-
+/*
 assemblyMergeStrategy in assembly := {
   case PathList("org","aopalliance", xs @ _*) => MergeStrategy.last
   case PathList("javax", "inject", xs @ _*) => MergeStrategy.last
@@ -51,3 +53,4 @@ assemblyMergeStrategy in assembly := {
     val oldStrategy = (assemblyMergeStrategy in assembly).value
     oldStrategy(x)
 }
+*/

@@ -17,6 +17,7 @@ object BostonCrimesMap extends  App {
   val offense_codes_file_path = "C:\\temp\\crimes-in-boston\\offense_codes.csv"
   val result_folder_path = "C:\\temp\\crimes-in-boston\\result"
 */
+
   val crime_file_path = args(0)
   val offense_codes_file_path = args(1)
   val result_folder_path = args(2)
@@ -31,10 +32,34 @@ object BostonCrimesMap extends  App {
 
   // читаем данные из файлов и создаем на их основе дата фреймы
   val crimes_df = spark.read.options(Map("inferSchema"->"true","delimiter"->",","header"->"true")).csv(crime_file_path)
-  val offense_codes_df = spark.read.options(Map("inferSchema"->"true","delimiter"->",","header"->"true")).csv(offense_codes_file_path)
+  val offense_codes_df_raw = spark.read.options(Map("inferSchema"->"true","delimiter"->",","header"->"true")).csv(offense_codes_file_path)
+
+
+  // - - - - - - - - - -
+
+  val crimes_df_view = crimes_df.createOrReplaceTempView("crimes_df_view")
+  val offense_codes_df_view = offense_codes_df_raw.createOrReplaceTempView("offense_codes_df_view")
+
+  val sql = "select code, name from (select code, name, row_number() over (partition by code order by name) as rn from offense_codes_df_view) where rn = 1"
+  val offense_codes_df = spark.sql(sql)
+  val offense_codes_df_fixed_view = offense_codes_df.createOrReplaceTempView("offense_codes_df_fixed_view")
+
+  //println("Lest see our raw crimes_df_view data!")
+  //spark.sql("select count(*) from crimes_df_view").show() // 319073
+  //spark.sql("select count(*) from crimes_df_view t1 left outer join offense_codes_df_fixed_view t2 on t1.OFFENSE_CODE = t2.CODE").show() // 577880
+  //val sql = "select * from offense_codes_df_view where code in (select code from offense_codes_df_view group by code having count(*) > 1) order by code"
+
+
+  // - - - - - - - - - -
 
   // джоиним фреймы и выбираем те колонки, которые понадобятся нам для выполнения ДЗ
   val joined_df =  crimes_df.join(broadcast(offense_codes_df), crimes_df("OFFENSE_CODE") <=> offense_codes_df("CODE")).select("INCIDENT_NUMBER", "district", "NAME", "YEAR", "MONTH", "Lat", "Long")
+
+
+
+
+
+
 
 
   // *****************************************************************
@@ -127,6 +152,7 @@ object BostonCrimesMap extends  App {
     .select("district", "crimes_total", "crimes_monthly" , "frequent_crime_types", "lat", "lng")
     .coalesce(1).write.parquet(result_folder_path)
     //.show()
+
 
 }
 
