@@ -39,4 +39,4 @@ docker run -p 5433:5433 -d -v /home/git/otus-de-andreevds-2019-11/HW8_Lesson16/d
 ```
 vsql -h192.168.247.131 -Udbadmin
 ```
-[!Connection_OK](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW8_Lesson16/_images/connection_ok.JPG)
+![Connection_OK](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW8_Lesson16/_images/connection_ok.JPG)
