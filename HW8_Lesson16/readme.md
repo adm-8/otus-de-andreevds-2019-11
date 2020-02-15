@@ -32,5 +32,10 @@ docker pull dataplatform/docker-vertica
 
 Запускаем докер, подпихнув папку с данными:
 ```
-docker run -p 5433:5433 -d -v ./data:/tmp/data dataplatform/docker-vertica
+docker run -p 5433:5433 -d -v /home/git/otus-de-andreevds-2019-11/HW8_Lesson16/data:/tmp/data dataplatform/docker-vertica
+```
+
+После того как запустился докер с вертикой, на виндовой (ну или любой другой где есть клиент vsql) машине соединяемся с базой. Соединение без пароля, указываем только имя пользователя dbadmin и IP адрес с вертикой, в моем случае получилось:
+```
+vsql -h192.168.247.131 -Udbadmin
 ```
