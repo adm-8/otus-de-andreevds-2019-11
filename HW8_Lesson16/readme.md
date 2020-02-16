@@ -27,6 +27,8 @@ Definition of Done:  DDL объектов  DML шагов преобразова
 ![ERD_DWH_DV2](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW8_Lesson16/_images/erd_DWH_dv2.jpg)
 
 
+### Разворачивание базы
+
 В моем случае саму Vertica я буду разворачивать на виртуалке с CentOS7, а конектиться к ней с виндовой машины. Погнали! Заходим на машине с CentOS7 в нужную папку куда будем клонировать репозиторий, в моем случае это:
 ```
  cd /home/git
