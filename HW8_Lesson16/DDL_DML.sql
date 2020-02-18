@@ -3,6 +3,7 @@
 CREATE SCHEMA SBX;
 
 /*
+
 drop table SBX.orders_external;
 drop table SBX.purchases_external;
 drop table SBX.products_external;
@@ -11,6 +12,10 @@ drop table SBX.categories_external;
 
 drop table SBX.purchases_internal;
 drop table SBX.products_internal;
+
+drop table SBX.hub_products;
+drop table SBX.sat_products; 
+
 */
 
 -- 0. Создаем таблицы на основе внешних CSV файлов:
@@ -115,7 +120,6 @@ insert into SBX.purchases_internal (
 -- = 23398
 
 -- 2.1 Создаем таблицу для продуктов
-DROP TABLE SBX.products_internal;
 create table if not exists SBX.products_internal (
 	load_dt  TIMESTAMP NOT NULL
 	, id  INTEGER NOT NULL
@@ -180,3 +184,86 @@ when matched and src.product_hash <> tgt.product_hash then
 		, product_hash = src.product_hash
 ;
 
+-- 3.1 Создаем HUB-таблицу для Продуктов
+create table if not exists SBX.hub_products (
+	product_hash varchar(32) not null
+	, load_dt timestamp not null
+	, product_id integer not null
+	, primary key (product_hash) enabled
+)
+	order by product_hash
+	segmented by hash(product_hash) all nodes
+;
+-- и заливаем в неё данные
+merge into SBX.hub_products tgt
+using (
+	select 
+		product_hash 
+		, getdate() as load_dt
+		, p.id as product_id
+	from SBX.products_internal p
+) src on tgt.product_hash = src.product_hash
+when not matched then insert (product_hash, load_dt, product_id) values (src.product_hash, src.load_dt, src.product_id);
+
+-- 3.2 Создаем SAT-таблицу для Продуктов
+create table if not exists SBX.sat_products (
+	product_hash varchar(32) not null
+	, load_dt timestamp not null
+	, product_id integer not null
+	, product_name varchar(500)
+	, category_id  INTEGER NOT NULL
+	, category_name varchar(500)
+	, parent_category_id  INTEGER
+	, parent_category_name varchar(500)
+	, primary key (product_hash) enabled
+)
+	order by product_hash
+	segmented by hash(product_hash) all nodes
+;
+-- Заливаем в неё данные
+merge into SBX.sat_products tgt
+using (
+select 
+		GETDATE() as load_dt
+		, id as product_id
+		, product_name
+		, category_id
+		, category_name
+		, parent_category_id
+		, parent_category_name
+		, product_hash
+	from SBX.products_internal
+) src on tgt.product_id = src.product_id
+
+when not matched then insert (
+	load_dt
+	, product_id
+	, product_name
+	, category_id
+	, category_name
+	, parent_category_id
+	, parent_category_name
+	, product_hash
+) values (
+	src.load_dt
+	, src.product_id
+	, src.product_name
+	, src.category_id
+	, src.category_name
+	, src.parent_category_id
+	, src.parent_category_name
+	, src.product_hash
+
+)
+
+when matched and tgt.product_hash <> src.product_hash then update set
+	load_dt = src.load_dt
+	, product_name = src.product_name
+	, category_id = src.category_id
+	, category_name = src.category_name
+	, parent_category_id = src.parent_category_id
+	, parent_category_name = src.parent_category_name
+	, product_hash = src.product_hash
+;
+
+select * from SBX.sat_products;
