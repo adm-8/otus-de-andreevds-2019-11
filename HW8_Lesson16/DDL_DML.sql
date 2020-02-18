@@ -2,7 +2,7 @@
 
 CREATE SCHEMA SBX;
 
-/*
+
 
 drop table SBX.orders_external;
 drop table SBX.purchases_external;
@@ -16,7 +16,10 @@ drop table SBX.products_internal;
 drop table SBX.hub_products;
 drop table SBX.sat_products; 
 
-*/
+drop table SBX.hub_purchases;
+drop table SBX.sat_purchases; 
+
+
 
 -- 0. Создаем таблицы на основе внешних CSV файлов:
 
@@ -123,16 +126,17 @@ insert into SBX.purchases_internal (
 create table if not exists SBX.products_internal (
 	load_dt  TIMESTAMP NOT NULL
 	, id  INTEGER NOT NULL
+	, hk_id  INTEGER NOT NULL
 	, product_name varchar(500)
 	, category_id  INTEGER NOT NULL
 	, category_name varchar(500)
 	, parent_category_id  INTEGER
 	, parent_category_name varchar(500)
 	, product_hash varchar(32) not null
-	, PRIMARY KEY (id)
+	, PRIMARY KEY (hk_id)
 )
-	ORDER BY id
-	SEGMENTED BY HASH(id) ALL NODES
+	ORDER BY hk_id
+	SEGMENTED BY hk_id ALL NODES
 ;
 
 -- select count(*) from SBX.products_internal;
@@ -144,6 +148,7 @@ using (
 	select 
 		load_dt
 		, id
+		, hash(id) as hk_id
 		, product_name
 		, category_id
 		, category_name
@@ -166,16 +171,15 @@ using (
 		left outer join SBX.categories_external par_c1 on par_c1.id = c.parent_id
 		left outer join SBX.categories_external par_c2 on par_c2.id = par_c1.parent_id
 	) main where rn = 1 
-) src on tgt.id = src.id
+) src on tgt.hk_id = src.hk_id
 
 when not matched then 
-	insert (load_dt, id, product_name, category_id, category_name, parent_category_id, parent_category_name, product_hash)
-	values (src.load_dt, src.id, src.product_name, src.category_id, src.category_name, src.parent_category_id, src.parent_category_name, src.product_hash)
+	insert (load_dt, id, hk_id, product_name, category_id, category_name, parent_category_id, parent_category_name, product_hash)
+	values (src.load_dt, src.id, src.hk_id, src.product_name, src.category_id, src.category_name, src.parent_category_id, src.parent_category_name, src.product_hash)
 
 when matched and src.product_hash <> tgt.product_hash then 
 	update set 
 		load_dt = src.load_dt
-		, id = src.id
 		, product_name = src.product_name
 		, category_id = src.category_id
 		, category_name = src.category_name
@@ -186,28 +190,29 @@ when matched and src.product_hash <> tgt.product_hash then
 
 -- 3.1 Создаем HUB-таблицу для Продуктов
 create table if not exists SBX.hub_products (
-	product_hash varchar(32) not null
+	hk_id integer not null
 	, load_dt timestamp not null
 	, product_id integer not null
-	, primary key (product_hash) enabled
+	, primary key (hk_id) enabled
 )
-	order by product_hash
-	segmented by hash(product_hash) all nodes
+	order by hk_id
+	segmented by hk_id all nodes
 ;
--- и заливаем в неё данные
+-- 3.2 заливаем в неё данные
 merge into SBX.hub_products tgt
 using (
 	select 
-		product_hash 
+		hk_id 
 		, getdate() as load_dt
 		, p.id as product_id
 	from SBX.products_internal p
-) src on tgt.product_hash = src.product_hash
-when not matched then insert (product_hash, load_dt, product_id) values (src.product_hash, src.load_dt, src.product_id);
+) src on tgt.hk_id = src.hk_id
+when not matched then insert (hk_id, load_dt, product_id) values (src.hk_id, src.load_dt, src.product_id);
 
--- 3.2 Создаем SAT-таблицу для Продуктов
+-- 3.3 Создаем SAT-таблицу для Продуктов
 create table if not exists SBX.sat_products (
-	product_hash varchar(32) not null
+	hk_id integer not null 
+	, product_hash varchar(32) not null
 	, load_dt timestamp not null
 	, product_id integer not null
 	, product_name varchar(500)
@@ -215,16 +220,17 @@ create table if not exists SBX.sat_products (
 	, category_name varchar(500)
 	, parent_category_id  INTEGER
 	, parent_category_name varchar(500)
-	, primary key (product_hash) enabled
+	, primary key (hk_id) enabled
 )
-	order by product_hash
-	segmented by hash(product_hash) all nodes
+	order by hk_id
+	segmented by hk_id all nodes
 ;
--- Заливаем в неё данные
+-- 3.4 Заливаем в неё данные
 merge into SBX.sat_products tgt
 using (
 select 
 		GETDATE() as load_dt
+		, hash(id) as hk_id
 		, id as product_id
 		, product_name
 		, category_id
@@ -233,10 +239,11 @@ select
 		, parent_category_name
 		, product_hash
 	from SBX.products_internal
-) src on tgt.product_id = src.product_id
+) src on tgt.hk_id = src.hk_id
 
 when not matched then insert (
 	load_dt
+	, hk_id
 	, product_id
 	, product_name
 	, category_id
@@ -246,6 +253,7 @@ when not matched then insert (
 	, product_hash
 ) values (
 	src.load_dt
+	, src.hk_id
 	, src.product_id
 	, src.product_name
 	, src.category_id
@@ -266,4 +274,137 @@ when matched and tgt.product_hash <> src.product_hash then update set
 	, product_hash = src.product_hash
 ;
 
-select * from SBX.sat_products;
+
+-- 4.1 Создаем SAT-таблицу для Состава 
+drop table SBX.hub_purchases ;
+create table if not exists SBX.hub_purchases (
+	hk_id integer not null
+	, load_dt  TIMESTAMP NOT NULL
+	, id  INTEGER NOT NULL
+	, PRIMARY KEY (hk_id)
+)
+	order by hk_id
+	segmented by hk_id all nodes
+;
+-- 4.2 И заливаем в неё данные 
+merge into SBX.hub_purchases tgt 
+using (
+	select 
+		hash(id) as  hk_id
+		, getdate() as load_dt
+		, id
+	from SBX.purchases_internal
+) src on src.hk_id = tgt.hk_id
+
+when not matched then 
+	insert (
+		hk_id
+		, load_dt
+		, id
+	) values (
+		src.hk_id
+		, src.load_dt
+		, src.id
+	)
+;
+
+-- 4.3 Создаем SAT-таблицу для Состава Заказа
+create table if not exists SBX.sat_purchases (
+	hk_id integer not null
+	, load_dt  TIMESTAMP NOT NULL
+	, id  INTEGER NOT NULL
+	, created timestamp not null
+	, order_id INTEGER NOT NULL
+	, product_id INTEGER NOT NULL
+	, price FLOAT NOT NULL 
+	, amount INTEGER NOT NULL
+	, total_sum FLOAT NOT NULL 
+	, PRIMARY KEY (id)
+)
+	order by hk_id
+	segmented by hk_id all nodes
+;
+-- 4.4 И заливаем в неё данные 
+merge into SBX.sat_purchases tgt 
+using (
+	select 
+		hash(id) as  hk_id
+		, getdate() as load_dt
+		, id
+		, created 
+		, order_id 
+		, product_id 
+		, price  
+		, amount 
+		, price * amount as total_sum
+	from SBX.purchases_internal
+) src on src.hk_id = tgt.hk_id
+
+when not matched then 
+	insert (
+		hk_id
+		, load_dt
+		, id
+		, created 
+		, order_id 
+		, product_id 
+		, price  
+		, amount 
+		, total_sum
+	) values (
+		src.hk_id
+		, src.load_dt
+		, src.id
+		, src.created 
+		, src.order_id 
+		, src.product_id 
+		, src.price  
+		, src.amount 
+		, src.total_sum
+	)
+;
+
+-- 5.1 Создаем таблицу с линкой между продуктами и составами заказов
+create table if not exists SBX.link_purchases_products (
+	product_hk_id integer not null
+	, purchase_hk_id integer not null
+	, primary key (product_hk_id, purchase_hk_id)
+)
+	order by product_hk_id, purchase_hk_id
+;
+-- и заливаем в неё связи
+merge into SBX.link_purchases_products tgt 
+using (
+	select 
+		hash(pur_i.id) as purchase_hk_id
+		, hash(pur_i.product_id) as product_hk_id
+	from SBX.purchases_internal pur_i
+		inner join SBX.hub_purchases h_pur on h_pur.hk_id = hash(pur_i.id)
+		inner join SBX.hub_products h_prod on h_prod.hk_id = hash(pur_i.product_id)
+) src on tgt.product_hk_id = src.product_hk_id and tgt.purchase_hk_id = src.purchase_hk_id
+when not matched then insert (product_hk_id, purchase_hk_id) values (src.product_hk_id, src.purchase_hk_id)
+;
+	
+	
+
+
+/*
+
+
+
+select * from SBX.link_purchases_products;
+
+
+
+select count(*)
+from SBX.hub_products hp 
+inner join SBX.sat_products sp on sp.hk_id = hp.hk_id
+;
+
+
+select count(*)
+from SBX.hub_purchases hp 
+inner join SBX.sat_purchases sp on sp.hk_id = hp.hk_id
+;
+
+*/
