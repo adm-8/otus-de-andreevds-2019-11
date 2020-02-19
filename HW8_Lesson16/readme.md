@@ -62,10 +62,12 @@ vsql -h192.168.247.131 -Udbadmin
 ```
 ![Connection_OK](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW8_Lesson16/_images/connection_ok.JPG)
 
-Соединение есть, прекрасно! [!Теперь можно выполнять наш DDL & DML](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW8_Lesson16/DDL_DML.sql)
+Соединение есть, прекрасно! 
+
+[Теперь можно выполнять наш DDL & DML](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW8_Lesson16/DDL_DML.sql)
 
 ## Получение данных:
-После того как мы создаели все таблицы, вьюхи, проекции и залили данные, можно погонять [!запросики витрин](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW8_Lesson16/DataMarts.sql) : 
+После того как мы создали все таблицы, вьюхи, проекции и залили данные, можно погонять [!запросики витрин](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW8_Lesson16/DataMarts.sql) : 
 
 ```
 -- Витрина "Самые покупаемые категрии товаров с группировкой по годам и месяцам"
@@ -92,6 +94,11 @@ order by total_sum desc
 ;
 ```
 ![DataMart_total_sum_by_product](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW8_Lesson16/_images/DataMart_total_sum_by_product.jpg)
+
+
+*Если выполнить EXPLAIN последнего запроса, то можно увидеть, что проекуцию мы делали не зря =) и судя по explain'ам мы получаем 2.5-3х меньше Cost на наши запросы витрин*
+
+![DataMart_total_sum_by_product](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW8_Lesson16/_images/DataMart_total_sum_by_product_explain.jpg)
 
 
 
