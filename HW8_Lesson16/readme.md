@@ -62,4 +62,36 @@ vsql -h192.168.247.131 -Udbadmin
 ```
 ![Connection_OK](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW8_Lesson16/_images/connection_ok.JPG)
 
-Соединение есть, прекрасно! Теперь можно выполнять наш [!DDL & DML](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW8_Lesson16/DDL_DML.sql)
+Соединение есть, прекрасно! [!Теперь можно выполнять наш DDL & DML](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW8_Lesson16/DDL_DML.sql)
+
+## Получение данных:
+После того как мы создаели все таблицы, вьюхи, проекции и залили данные, можно погонять [!запросики витрин](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW8_Lesson16/DataMarts.sql) : 
+
+```
+-- Витрина "Самые покупаемые категрии товаров с группировкой по годам и месяцам"
+-- explain
+select c_year , c_month, category_name, count(category_name) as cnt
+from sbx.link_purchases_products lpp
+inner join sbx.sat_products spr on spr.hk_id = lpp.product_hk_id
+inner join sbx.sat_purchases spu on spu.hk_id = lpp.purchase_hk_id
+group by category_name, c_year, c_month
+order by cnt desc
+;
+```
+![DataMart_count_by_cat_name](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW8_Lesson16/_images/DataMart_count_by_cat_name.jpg)
+
+```
+-- Витрина "Самые дохоные товары с группировкой по годам и месяцам"
+-- explain
+select c_year, c_month, product_name, sum(amount) total_count , sum(total_sum) total_sum 
+from sbx.link_purchases_products lpp
+inner join sbx.sat_products spr on spr.hk_id = lpp.product_hk_id
+inner join sbx.sat_purchases spu on spu.hk_id = lpp.purchase_hk_id
+group by c_year, c_month, product_name 
+order by total_sum desc
+;
+```
+![DataMart_total_sum_by_product](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW8_Lesson16/_images/DataMart_total_sum_by_product.jpg)
+
+
+
