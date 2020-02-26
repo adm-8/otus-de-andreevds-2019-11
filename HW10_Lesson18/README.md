@@ -14,4 +14,7 @@
 
 ## Полезные ссылки
 
+https://docs.google.com/document/d/1D6Oiz7YCy9f17BRcd2lL4JhEmAYIwSUET2b529QHXCo/edit
+
+https://docs.cloudera.com/documentation/enterprise/5-6-x/topics/quickstart_docker_container.html
 
