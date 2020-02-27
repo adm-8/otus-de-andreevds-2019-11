@@ -10,7 +10,14 @@
 
 ## Результат
 
-![WorkDoneAndError](https://github.com/adm-8/otus-de-andreevds-2019-11/raw/master/HW4_Lesson5/_images/WorkDoneAndError.JPG)
+Скрин создания таблицы через beeline:
+![beeline](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW10_Lesson18/_images/SOME_CREATE_TABLE.JPG)
+
+Выполнение Window function 1:
+![beeline](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW10_Lesson18/_images/HIVE_WIN_1.JPG)
+
+Выполнение Window function 2:
+![beeline](https://raw.githubusercontent.com/adm-8/otus-de-andreevds-2019-11/master/HW10_Lesson18/_images/HIVE_WIN_2.JPG)
 
 ## Полезные ссылки
 
