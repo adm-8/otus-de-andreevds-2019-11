@@ -1,5 +1,6 @@
 # Результаты и решение:
-### 2. Создайте KSQL Stream WIKILANG
+
+## 2. Создайте KSQL Stream WIKILANG
 ```
 CREATE STREAM WIKILANG AS select 
 	createdat 
@@ -26,8 +27,71 @@ describe extended wikipedianobot;
 ```
 ![DESCRIBE_WIKIPEDIABOT.JPG](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW11_Lesson20/_images/DESCRIBE_WIKIPEDIABOT.JPG?raw=true)
 
-**Почему для wikipedianobot интерфейс показывает также consumer-* метрики?**
-*Вероятнее всего потому что нам стрим основан на WIKIPEDIANOBOT и является для него потребителем (consumer)*
+*Почему для wikipedianobot интерфейс показывает также consumer-* метрики?
+**Вероятнее всего потому что наш стрим основан на WIKIPEDIANOBOT и является для него потребителем (consumer)
+
+#№ 4. Добавьте данные из стрима WIKILANG в ElasticSearch
+* Используя полученные знания и документацию ответьте на вопросы:  
+* a) Опишите что делает каждая из этих операций?  
+* б) Зачем Elasticsearch нужен mapping чтобы принять данные?  
+* в) Что дает index-pattern?
+
+
+## 5. Создайте отчет "Топ10 национальных разделов" на базе индекса wikilang
+
+* 5.1 Что вы увидели в отчете?*
+** кол-во записей с группировкой по CHANNEL, что-то вроде:
+```
+select CHANNEL, count(*) from wikilang group by CHANNEL
+```
+
+
+* 5.2 Приложите тело запроса к заданию:
+```
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match_all": {}
+        },
+        {
+          "match_phrase": {
+            "CHANNEL.keyword": {
+              "query": "#ru.wikipedia"
+            }
+          }
+        },
+        {
+          "range": {
+            "CREATEDAT": {
+              "gte": 1582993643283,
+              "lte": 1582994543283,
+              "format": "epoch_millis"
+            }
+          }
+        }
+      ],
+      "must_not": []
+    }
+  },
+  "_source": {
+    "excludes": []
+  },
+  "aggs": {
+    "2": {
+      "terms": {
+        "field": "CHANNEL.keyword",
+        "size": 10,
+        "order": {
+          "_count": "desc"
+        }
+      }
+    }
+  }
+}
+```
 
 # 1. Разверните и подготовьте окружение
 
