@@ -10,7 +10,7 @@ CREATE STREAM WIKILANG AS select
 	, diffurl 
 FROM WIKIPEDIANOBOT 
 where isbot = false
-and channel like '%#ru.wikipedia%'
+and channel not like '%#en.%'
 ;
 
 ```
@@ -27,8 +27,8 @@ describe extended wikipedianobot;
 ```
 ![DESCRIBE_WIKIPEDIABOT.JPG](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW11_Lesson20/_images/DESCRIBE_WIKIPEDIABOT.JPG?raw=true)
 
-*Почему для wikipedianobot интерфейс показывает также consumer-* метрики?
-**Вероятнее всего потому что наш стрим основан на WIKIPEDIANOBOT и является для него потребителем (consumer)
+*Почему для wikipedianobot интерфейс показывает также consumer- метрики?*
+**Вероятнее всего потому что наш стрим основан на WIKIPEDIANOBOT и является для него потребителем (consumer)**
 
 #№ 4. Добавьте данные из стрима WIKILANG в ElasticSearch
 * Используя полученные знания и документацию ответьте на вопросы:  
@@ -39,14 +39,14 @@ describe extended wikipedianobot;
 
 ## 5. Создайте отчет "Топ10 национальных разделов" на базе индекса wikilang
 
-* 5.1 Что вы увидели в отчете?*
+*5.1 Что вы увидели в отчете?
 ** кол-во записей с группировкой по CHANNEL, что-то вроде:
 ```
 select CHANNEL, count(*) from wikilang group by CHANNEL
 ```
 
 
-* 5.2 Приложите тело запроса к заданию:
+*5.2 Приложите тело запроса к заданию:
 ```
 {
   "size": 0,
