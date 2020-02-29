@@ -18,11 +18,13 @@ and channel like '%#ru.wikipedia%'
 describe extended wikilang;
 
 ```
+![DESCRIBE_WIKILANG.JPG](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW11_Lesson20/_images/DESCRIBE_WIKILANG.JPG?raw=true)
 
 ```
 describe extended wikipedianobot;
 
 ```
+![DESCRIBE_WIKIPEDIABOT.JPG](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW11_Lesson20/_images/DESCRIBE_WIKIPEDIABOT.JPG?raw=true)
 
 
 
