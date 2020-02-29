@@ -30,7 +30,7 @@ describe extended wikipedianobot;
 *Почему для wikipedianobot интерфейс показывает также consumer- метрики?*
 **Вероятнее всего потому что наш стрим основан на WIKIPEDIANOBOT и является для него потребителем (consumer)**
 
-#№ 4. Добавьте данные из стрима WIKILANG в ElasticSearch
+## 4. Добавьте данные из стрима WIKILANG в ElasticSearch
 * Используя полученные знания и документацию ответьте на вопросы:  
 * a) Опишите что делает каждая из этих операций?  
 * б) Зачем Elasticsearch нужен mapping чтобы принять данные?  
