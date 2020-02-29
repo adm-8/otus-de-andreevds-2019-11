@@ -1,3 +1,31 @@
+# Результаты и решение:
+### 2. Создайте KSQL Stream WIKILANG
+```
+CREATE STREAM WIKILANG AS select 
+	createdat 
+	, channel 
+	, username
+	, wikipage
+	, diffurl 
+FROM WIKIPEDIANOBOT 
+where isbot = false
+and channel like '%#ru.wikipedia%'
+;
+
+```
+## 3. Мониторинг WIKILANG
+```
+describe extended wikilang;
+
+```
+
+```
+describe extended wikipedianobot;
+
+```
+
+
+
 # 1. Разверните и подготовьте окружение
 
 Вам потребуется компьютер или виртуальная машина минимум с двумя ядрами и 8 гигабайтами памяти (оптимально - 4 ядра, 16 гигабайт памяти и 100 гигабайт на диске для данных). Вы можете использовать Mac или Linux.
