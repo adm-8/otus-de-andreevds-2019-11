@@ -60,7 +60,7 @@ select CHANNEL, count(*) from wikilang group by CHANNEL
 ![TOP10.JPG](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW11_Lesson20/_images/TOP10.JPG?raw=true)
 
 
-*5.2 Приложите тело запроса к заданию:
+*5.2 Приложите тело запроса к заданию:*
 ```
 {
   "size": 0,
