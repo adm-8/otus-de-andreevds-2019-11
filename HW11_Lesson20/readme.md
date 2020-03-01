@@ -27,14 +27,15 @@ describe extended wikipedianobot;
 ```
 ![DESCRIBE_WIKIPEDIABOT.JPG](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW11_Lesson20/_images/DESCRIBE_WIKIPEDIABOT.JPG?raw=true)
 
-*Почему для wikipedianobot интерфейс показывает также consumer- метрики?*
-**Вероятнее всего потому что наш стрим основан на WIKIPEDIANOBOT и является для него потребителем (consumer)**
+*Почему для wikipedianobot интерфейс показывает также consumer- метрики?
+
+**Вероятнее всего потому что наш стрим основан на WIKIPEDIANOBOT и является для него потребителем (consumer)
 
 ## 4. Добавьте данные из стрима WIKILANG в ElasticSearch
-* Используя полученные знания и документацию ответьте на вопросы:  
-* a) Опишите что делает каждая из этих операций?  
-* б) Зачем Elasticsearch нужен mapping чтобы принять данные?  
-* в) Что дает index-pattern?
+*Используя полученные знания и документацию ответьте на вопросы:  
+*a) Опишите что делает каждая из этих операций?  
+*б) Зачем Elasticsearch нужен mapping чтобы принять данные?  
+*в) Что дает index-pattern?
 
 
 ## 5. Создайте отчет "Топ10 национальных разделов" на базе индекса wikilang
@@ -44,6 +45,7 @@ describe extended wikipedianobot;
 ```
 select CHANNEL, count(*) from wikilang group by CHANNEL
 ```
+![TOP10.JPG](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW11_Lesson20/_images/TOP10.JPG?raw=true)
 
 
 *5.2 Приложите тело запроса к заданию:
@@ -57,17 +59,10 @@ select CHANNEL, count(*) from wikilang group by CHANNEL
           "match_all": {}
         },
         {
-          "match_phrase": {
-            "CHANNEL.keyword": {
-              "query": "#ru.wikipedia"
-            }
-          }
-        },
-        {
           "range": {
             "CREATEDAT": {
-              "gte": 1582993643283,
-              "lte": 1582994543283,
+              "gte": 1583067441319,
+              "lte": 1583068341319,
               "format": "epoch_millis"
             }
           }
