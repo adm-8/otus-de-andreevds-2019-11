@@ -53,7 +53,7 @@ describe extended wikipedianobot;
 
 *5.1 Что вы увидели в отчете?*
 
-**Кол-во записей с группировкой по CHANNEL, что-то вроде:**
+** В отчете мы видим кол-во записей с группировкой по CHANNEL, что-то вроде:**
 ```
 select CHANNEL, count(*) from wikilang group by CHANNEL
 ```
