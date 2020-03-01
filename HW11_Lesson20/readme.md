@@ -27,15 +27,26 @@ describe extended wikipedianobot;
 ```
 ![DESCRIBE_WIKIPEDIABOT.JPG](https://github.com/adm-8/otus-de-andreevds-2019-11/blob/master/HW11_Lesson20/_images/DESCRIBE_WIKIPEDIABOT.JPG?raw=true)
 
-*Почему для wikipedianobot интерфейс показывает также consumer- метрики?
+*Почему для wikipedianobot интерфейс показывает также consumer- метрики?*
 
-**Вероятнее всего потому что наш стрим основан на WIKIPEDIANOBOT и является для него потребителем (consumer)
+**Вероятнее всего потому что наш стрим основан на WIKIPEDIANOBOT и является для него потребителем (consumer)**
 
 ## 4. Добавьте данные из стрима WIKILANG в ElasticSearch
 *Используя полученные знания и документацию ответьте на вопросы:  
+
 *a) Опишите что делает каждая из этих операций?  
+* set_elasticsearch_mapping_lang.sh - создает маппинг , т.е. описывает структуру данных
+* submit_elastic_sink_lang_config.sh - создает соединение и использует созданный маппинг
+* index name or pattern: wikilang - описывает имя индеса(ов) из которых брать данные
+
 *б) Зачем Elasticsearch нужен mapping чтобы принять данные?  
+* В маппинге могут быть описаны какие стринговые поля должны быть обработаны как "full text fields"
+* какие поля содержат числа, даты или геолокацию
+* формат дат
+* кастомные правила обраотки для динамически добавляемых полей
+
 *в) Что дает index-pattern?
+* index-pattern описывает имя индеса(ов) из которых брать данные
 
 
 ## 5. Создайте отчет "Топ10 национальных разделов" на базе индекса wikilang
